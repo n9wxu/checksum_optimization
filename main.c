@@ -103,7 +103,7 @@ int main(int argc, const char * argv[]) {
         frtSum2 = usGenerateChecksum2(0, buffer4, sizeof(buffer4));
         gpio_put(PIN2,0);
         gpio_put(PIN3,1);
-        frtSum2 = usGenerateChecksum32(0, buffer4, sizeof(buffer4));
+        frtSum32 = usGenerateChecksum32(0, buffer4, sizeof(buffer4));
         gpio_put(PIN3,0);
         restore_interrupts(irq_status);
 
