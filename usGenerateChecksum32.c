@@ -27,9 +27,8 @@ uint16_t usGenerateChecksum32( uint16_t usSum,
         {
             for(int x = 0; x < UNROLL; x++)
             {
-                ulAccum += ptr[ x ];
+                ulAccum += *(ptr++);
             }
-            ptr = &ptr[UNROLL];
             uxBytesLeft -= UNROLL*2;
         }
         
