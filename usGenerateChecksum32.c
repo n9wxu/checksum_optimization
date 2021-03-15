@@ -7,7 +7,7 @@ uint16_t usGenerateChecksum32( uint16_t usSum,
                             size_t uxByteCount )
 {
     const uint16_t * ptr =  ( const uint16_t * ) ((uintptr_t) pucNextData);
-    const int notAligned = ((uintptr_t)pucNextData)&1U;
+    const uintptr_t notAligned = (uintptr_t)(ptr)&1;
     
     size_t uxBytesLeft = uxByteCount;
     
@@ -15,28 +15,28 @@ uint16_t usGenerateChecksum32( uint16_t usSum,
     
     if( uxBytesLeft >= 1U )
     {
-        if(((uintptr_t) pucNextData & 1)!=0)
+        if(notAligned!=0)
         {
             ulAccum = *pucNextData << 8;
             ptr = ( const uint16_t * ) ((uintptr_t) &pucNextData[1]);
             uxBytesLeft --;
         }
-
+        
         #define UNROLL 16
         while(uxBytesLeft>=UNROLL*2)
         {
             for(int x = 0; x < UNROLL; x++)
-                ulAccum += ptr[ x ];
+            ulAccum += ptr[ x ];
             ptr = &ptr[UNROLL];
             uxBytesLeft -= UNROLL*2;
         }
         
-        while(uxBytesLeft>1)
+        while(uxBytesLeft > 1)
         {
             ulAccum += *(ptr++);
             uxBytesLeft -= 2;
         }
-
+        
         if(uxBytesLeft)
         {
             ulAccum += *((const uint8_t *) (uintptr_t)ptr);
@@ -54,12 +54,8 @@ uint16_t usGenerateChecksum32( uint16_t usSum,
         ulAccum = (ulAccum & 0x0000FFFF) + (ulAccum >> 16);
         ulAccum = (ulAccum & 0x0000FFFF) + (ulAccum >> 16);
         ulAccum = (ulAccum & 0x0000FFFF) + (ulAccum >> 16);
-
-    }
-    else // TODO: Do we need to do something for < 8-byte packet?
-    {
-        // empty else
+        ulAccum = FreeRTOS_ntohs(ulAccum);
     }
     
-    return FreeRTOS_ntohs(ulAccum);
+    return ulAccum;
 }
