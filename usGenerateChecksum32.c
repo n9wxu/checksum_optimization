@@ -17,7 +17,7 @@ uint16_t usGenerateChecksum32( uint16_t usSum,
     {
         if(notAligned!=0)
         {
-            ulAccum = *pucNextData << 8;
+            ulAccum = ((uint32_t)*pucNextData) << 8;
             ptr = ( const uint16_t * ) ((uintptr_t) &pucNextData[1]);
             uxBytesLeft --;
         }
