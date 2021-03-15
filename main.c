@@ -44,6 +44,8 @@ void testAlgorithm(unsigned testCount, uint16_t (*checksum)(uint16_t, const uint
 
 int main(int argc, const char * argv[]) {
     
+    uint16_t rfcSum, frtSum32, frtSum;
+
     stdio_init_all();
 
     gpio_init(PIN0);
@@ -55,37 +57,9 @@ int main(int argc, const char * argv[]) {
     gpio_set_dir(PIN2,GPIO_OUT);
     gpio_set_dir(PIN3,GPIO_OUT);
 
-    uint16_t rfcSum = rfcChecksum(0,buffer0, sizeof(buffer0));
-    uint16_t frtSum = usGenerateChecksum(0, buffer0, sizeof(buffer0));
-    uint16_t frtSum2 = usGenerateChecksum2(0, buffer0, sizeof(buffer0));
-    uint16_t frtSum32 = usGenerateChecksum32(0, buffer0, sizeof(buffer0));
+    srand((unsigned int)0);
 
-    printf("rfcSum %04X - frtSum %04X - frtSum2 %04X - frtSum32 %04X\n", rfcSum, frtSum, frtSum2, frtSum32);
-
-    srand((unsigned int)clock());
-    
-    for(int x=0;x<sizeof(buffer1);x++)
-    {
-        buffer1[x] = rand();
-        buffer2[x] = rand();
-        buffer3[x] = rand();
-        buffer4[x] = rand();
-    }
-    
-    for(int x=sizeof(buffer1);x<sizeof(buffer2);x++)
-    {
-        buffer2[x] = rand();
-        buffer3[x] = rand();
-        buffer4[x] = rand();
-    }
-
-    for(int x=sizeof(buffer2);x<sizeof(buffer3);x++)
-    {
-        buffer3[x] = rand();
-        buffer4[x] = rand();
-    }
-
-    for(int x=sizeof(buffer3);x<sizeof(buffer4);x++)
+    for(int x=0;x<sizeof(buffer4);x++)
     {
         buffer4[x] = rand();
     }
@@ -100,13 +74,10 @@ int main(int argc, const char * argv[]) {
         frtSum = usGenerateChecksum(0, buffer4, sizeof(buffer4));
         gpio_put(PIN1,0);
         gpio_put(PIN2,1);
-        frtSum2 = usGenerateChecksum2(0, buffer4, sizeof(buffer4));
-        gpio_put(PIN2,0);
-        gpio_put(PIN3,1);
         frtSum32 = usGenerateChecksum32(0, buffer4, sizeof(buffer4));
-        gpio_put(PIN3,0);
+        gpio_put(PIN2,0);
         restore_interrupts(irq_status);
 
-        printf("rfcSum %04X - frtSum %04X - frtSum2 %04X - frtSum32 %04X\n", rfcSum, frtSum, frtSum2, frtSum32);
+        printf("rfcSum %04X - frtSum %04X - frtSum32 %04X\n", rfcSum, frtSum, frtSum32);
     }
 }

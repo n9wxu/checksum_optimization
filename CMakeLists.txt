@@ -21,3 +21,7 @@ pico_enable_stdio_uart(PicoTest 0)
  
 # Enable extra outputs (SWD?)
 pico_add_extra_outputs(PicoTest)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -mtune=cortex-m0plus")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -mtune=cortex-m0plus")
+
